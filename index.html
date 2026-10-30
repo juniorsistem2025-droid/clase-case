@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Laptop interactiva · Hardware</title>
+<style>
+:root{color-scheme:dark;--a:#4ea8ff;--g:#7ef0c0}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{margin:0;overflow:hidden;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:#e8eefc;background:radial-gradient(1100px 700px at 50% -10%,#1d2f5c,#090e1c 60%,#04060c) fixed}
+.app{height:100dvh;display:flex;flex-direction:column;padding:max(6px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(6px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left))}
+main{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,58fr) minmax(0,42fr);gap:12px}
+main>section{display:flex;flex-direction:column;gap:6px;min-height:0;min-width:0}
+.views{align-self:center;display:flex;gap:4px;padding:3px;background:#0f1730;border:1px solid #223158;border-radius:12px}
+.views button{border:0;background:none;color:#8fa3c8;padding:6px 18px;border-radius:9px;font:600 13px system-ui;cursor:pointer}
+.views .on{background:linear-gradient(135deg,#2f6fd0,var(--a));color:#fff;box-shadow:0 6px 18px #4ea8ff59}
+.stage{flex:1;min-height:0;display:flex;perspective:1500px;padding:2px;border:1px solid #223158;border-radius:16px;background:radial-gradient(700px 360px at 50% 6%,#4ea8ff29,transparent 70%),linear-gradient(#111a33,#080d1b);box-shadow:0 20px 50px #0009,inset 0 1px #ffffff12;touch-action:pan-y}
+#lap{width:100%;height:100%;display:block;overflow:visible;transform:rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .2s ease-out}
+.part{cursor:pointer;transition:filter .2s}
+.part:hover{filter:brightness(1.25)}
+.part:focus-visible{outline:none;filter:brightness(1.3) drop-shadow(0 0 6px #fff)}
+.part.sel{filter:drop-shadow(0 0 4px #4ea8ff) drop-shadow(0 0 14px #4ea8ffcc) brightness(1.2);animation:pulse 1.8s ease-in-out infinite}
+@keyframes pulse{50%{filter:drop-shadow(0 0 2px #4ea8ff) drop-shadow(0 0 7px #4ea8ff88) brightness(1.1)}}
+#lid{transform-box:fill-box;transform-origin:50% 100%;animation:open 1s cubic-bezier(.2,.8,.2,1) both}
+@keyframes open{from{transform:scaleY(.04);opacity:.2}}
+.blades{transform-box:fill-box;transform-origin:center;animation:spin 1.1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.lb{font-size:12px;fill:#8fa3c8;pointer-events:none}
+.lc{font-size:10px;font-weight:700;letter-spacing:.6px;fill:#dbe7ff;pointer-events:none}
+.tabs{flex:none;display:flex;gap:6px;overflow-x:auto;padding:2px;scrollbar-width:none;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;touch-action:pan-x}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{flex:none;scroll-snap-align:center;border:1px solid #223158;background:#0f1730;color:#9db2d6;padding:6px 12px;border-radius:99px;font:500 12px system-ui;cursor:pointer;white-space:nowrap}
+.tabs .on{background:var(--a);border-color:var(--a);color:#06101f}
+.panel{min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:14px 16px;border:1px solid #223158;border-radius:16px;background:linear-gradient(#141e3a,#0a1020);box-shadow:0 20px 50px #0009,inset 0 1px #ffffff12}
+h2{margin:0 0 8px;font-size:17px}
+.ds{color:#a9bcdc;font-size:13px;line-height:1.55;margin:0 0 10px}.t{color:#6f83a8;font-size:12px}
+.chip{display:inline-block;margin-bottom:8px;padding:3px 10px;border-radius:99px;font-size:10.5px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:#07101f;background:linear-gradient(135deg,var(--g),var(--a))}
+ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+li{position:relative;padding-left:18px;font-size:12.5px;line-height:1.5;color:#c8d6ee}
+li:before{content:"";position:absolute;left:3px;top:7px;width:7px;height:7px;border-radius:50%;background:linear-gradient(135deg,var(--a),var(--g));box-shadow:0 0 8px #4ea8ffcc}
+@media(orientation:portrait){
+ body{overflow:auto}
+ .app{height:auto;min-height:100dvh}
+ main{grid-template-columns:1fr}
+ .stage{display:block}#lap{height:auto}
+ .panel{min-height:200px}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+<main>
+<section>
+<div class="views"><button class="on" data-v="X">Exterior</button><button data-v="I">Interior</button></div>
+<div class="stage" id="stage">
+<svg id="lap" viewBox="0 0 1100 740" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Laptop interactiva con sus partes">
+<defs>
+<linearGradient id="gl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c3cce0"/><stop offset=".15" stop-color="#8e99b4"/><stop offset="1" stop-color="#3a4259"/></linearGradient>
+<linearGradient id="gm" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b9c3da"/><stop offset=".1" stop-color="#8d98b3"/><stop offset=".7" stop-color="#586280"/><stop offset="1" stop-color="#3d455e"/></linearGradient>
+<linearGradient id="gf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2e3550"/><stop offset="1" stop-color="#0f1324"/></linearGradient>
+<linearGradient id="gh" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#232a44"/><stop offset=".3" stop-color="#9aa5c0"/><stop offset=".55" stop-color="#3b4462"/><stop offset="1" stop-color="#11162a"/></linearGradient>
+<linearGradient id="gk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4d5879"/><stop offset="1" stop-color="#232a41"/></linearGradient>
+<linearGradient id="gt" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2c3654"/><stop offset="1" stop-color="#141a2e"/></linearGradient>
+<linearGradient id="gb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#21705a"/><stop offset="1" stop-color="#0e382c"/></linearGradient>
+<linearGradient id="gc" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f0c27c"/><stop offset=".5" stop-color="#a8743a"/><stop offset="1" stop-color="#63401f"/></linearGradient>
+<linearGradient id="gy" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e4e9f5"/><stop offset="1" stop-color="#7c879f"/></linearGradient>
+<linearGradient id="gv" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3f7344"/><stop offset="1" stop-color="#1a3a20"/></linearGradient>
+<pattern id="gr" width="7" height="7" patternUnits="userSpaceOnUse"><circle cx="3.5" cy="3.5" r="1.5" fill="#56648a"/></pattern>
+<pattern id="tr" width="28" height="28" patternUnits="userSpaceOnUse"><path d="M0 14H11L14 8H28M14 28V20L21 14" stroke="#58d6a8" stroke-opacity=".25" fill="none"/></pattern>
+<clipPath id="cd"><path d="M215 410H885L970 640H130Z"/></clipPath>
+<clipPath id="cs"><rect x="261" y="68" width="578" height="296" rx="4"/></clipPath>
+<filter id="br" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".01 .55" numOctaves="2" seed="7"/><feColorMatrix values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1.4 -.55"/></filter>
+<filter id="b14" x="-10%" y="-200%" width="120%" height="500%"><feGaussianBlur stdDeviation="14"/></filter>
+<filter id="b40" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="40"/></filter>
+<filter id="sh" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="4" stdDeviation="3.5" flood-opacity=".65"/></filter>
+</defs>
+
+<!-- EXTERIOR -->
+<g id="X">
+<ellipse cx="550" cy="684" rx="470" ry="26" fill="#000" opacity=".65" filter="url(#b14)"/>
+<g class="part" data-part="chassis">
+<path d="M215 410H885L970 640H130Z" fill="url(#gm)" stroke="#a5b0ca" stroke-linejoin="round"/>
+<rect x="120" y="405" width="860" height="240" filter="url(#br)" clip-path="url(#cd)" opacity=".5"/>
+<path d="M130 640H970L960 668Q550 684 140 668Z" fill="url(#gf)"/>
+<path d="M130 640H970" stroke="#e4eaf6" stroke-opacity=".75" stroke-width="2"/>
+</g>
+<g class="part" data-part="hinge"><rect x="330" y="386" width="440" height="28" rx="10" fill="url(#gh)" stroke="#0b0f1c"/><rect x="342" y="390" width="416" height="3" rx="1.5" fill="#fff" opacity=".35"/></g>
+<g id="lid">
+<g class="part" data-part="bezel">
+<rect x="225" y="36" width="650" height="358" rx="20" fill="url(#gl)" stroke="#d5dcec" stroke-opacity=".6" stroke-width="1.5"/>
+<rect x="237" y="48" width="626" height="334" rx="12" fill="#05070d"/>
+<text x="550" y="377" text-anchor="middle" font-size="10" letter-spacing="6" fill="#4a5574">LAPTOP</text>
+</g>
+<g class="part" data-part="screen">
+<g clip-path="url(#cs)">
+<rect x="261" y="68" width="578" height="296" fill="#0a1530"/>
+<circle cx="380" cy="150" r="150" fill="#2f6fd0" filter="url(#b40)" opacity=".9"/>
+<circle cx="740" cy="120" r="130" fill="#8a5cf0" filter="url(#b40)" opacity=".75"/>
+<circle cx="640" cy="330" r="150" fill="#18c6a0" filter="url(#b40)" opacity=".6"/>
+<rect x="316" y="118" width="468" height="160" rx="14" fill="#fff" opacity=".08" stroke="#fff" stroke-opacity=".2"/>
+<text x="550" y="198" text-anchor="middle" font-size="26" letter-spacing="8" fill="#fff" opacity=".92">PANTALLA</text>
+<text x="550" y="226" text-anchor="middle" font-size="12.5" letter-spacing="2" fill="#cfe2ff" opacity=".8">1920 × 1080 · 60 Hz</text>
+<rect x="430" y="334" width="240" height="20" rx="10" fill="#fff" opacity=".14"/>
+<path d="M261 68H560L430 364H261Z" fill="#fff" opacity=".07"/>
+</g>
+</g>
+<g class="part" data-part="webcam"><circle cx="550" cy="58" r="6" fill="#05070d" stroke="#3d4a6b" stroke-width="1.5"/><circle cx="550" cy="58" r="2.6" fill="#2f6fd0"/><circle cx="534" cy="58" r="1.6" fill="#2a3350"/><circle cx="566" cy="58" r="1.6" fill="#7ef0c0"/></g>
+</g>
+<g class="part" data-part="speakers" id="sp"></g>
+<g class="part" data-part="keyboard" id="kb"></g>
+<g class="part" data-part="touchpad" id="tp"></g>
+<g class="part" data-part="power"><circle cx="849" cy="425" r="11" fill="#10182c" stroke="#b5bfd6" stroke-width="1.6"/><circle cx="849" cy="425" r="3.6" fill="#7ef0c0"/></g>
+<g id="pt"></g>
+</g>
+
+<!-- INTERIOR -->
+<g id="I" style="display:none">
+<g opacity=".22"><rect x="225" y="36" width="650" height="358" rx="20" fill="url(#gl)"/><rect x="237" y="48" width="626" height="334" rx="12" fill="#05070d"/></g>
+<text x="550" y="218" text-anchor="middle" font-size="13" letter-spacing="5" fill="#53648c">VISTA INTERIOR · TAPA INFERIOR RETIRADA</text>
+<rect x="165" y="412" width="770" height="290" rx="22" fill="#0b1224" stroke="#34416a" stroke-width="2"/>
+<g class="part" data-part="speakers"><rect x="178" y="426" width="50" height="172" rx="9" fill="#151d35" stroke="#4a5a85" filter="url(#sh)"/><rect x="184" y="434" width="38" height="156" rx="6" fill="url(#gr)"/><rect x="872" y="426" width="50" height="172" rx="9" fill="#151d35" stroke="#4a5a85" filter="url(#sh)"/><rect x="878" y="434" width="38" height="156" rx="6" fill="url(#gr)"/></g>
+<g class="part" data-part="motherboard"><rect x="238" y="424" width="624" height="178" rx="10" fill="url(#gb)" stroke="#47bd93" stroke-width="1.5" filter="url(#sh)"/><rect x="238" y="424" width="624" height="178" rx="10" fill="url(#tr)"/><circle cx="252" cy="438" r="4.5" fill="#bcc6dc"/><circle cx="848" cy="438" r="4.5" fill="#bcc6dc"/><circle cx="252" cy="588" r="4.5" fill="#bcc6dc"/><circle cx="848" cy="588" r="4.5" fill="#bcc6dc"/><text class="lc" x="550" y="594" text-anchor="middle">PLACA MADRE</text></g>
+<g class="part" data-part="wifi"><rect x="258" y="440" width="92" height="34" rx="4" fill="#20406a" stroke="#4ea8ff" stroke-width="1.5" filter="url(#sh)"/><rect x="266" y="448" width="20" height="18" rx="2" fill="#0d1a2e"/><rect x="292" y="459" width="50" height="3" fill="#7ef0c0" opacity=".6"/><text class="lc" x="292" y="454">Wi-Fi</text></g>
+<g class="part" data-part="storage"><rect x="258" y="492" width="162" height="38" rx="5" fill="#2a3b5f" stroke="#7a9ad6" stroke-width="1.5" filter="url(#sh)"/><rect x="268" y="500" width="30" height="22" rx="3" fill="#0d1526"/><rect x="304" y="500" width="30" height="22" rx="3" fill="#0d1526"/><text class="lc" x="344" y="515">SSD M.2</text></g>
+<g class="part" data-part="cpu"><rect x="436" y="438" width="74" height="74" rx="5" fill="none" stroke="#c9a05a" stroke-width="5" stroke-dasharray="2 2.5"/><rect x="440" y="442" width="66" height="66" rx="5" fill="url(#gy)" stroke="#4ea8ff" stroke-width="2" filter="url(#sh)"/><rect x="450" y="452" width="46" height="46" rx="3" fill="#18284a"/><text class="lc" x="473" y="479" text-anchor="middle" font-size="12">CPU</text></g>
+<g class="part" data-part="gpu"><rect x="516" y="438" width="74" height="74" rx="5" fill="none" stroke="#c9a05a" stroke-width="5" stroke-dasharray="2 2.5"/><rect x="520" y="442" width="66" height="66" rx="5" fill="url(#gy)" stroke="#a07ef0" stroke-width="2" filter="url(#sh)"/><rect x="530" y="452" width="46" height="46" rx="3" fill="#2a1a4a"/><text class="lc" x="553" y="479" text-anchor="middle" font-size="12">GPU</text></g>
+<g class="part" data-part="cooling"><rect x="592" y="456" width="170" height="13" rx="6.5" fill="url(#gc)"/><rect x="592" y="482" width="170" height="13" rx="6.5" fill="url(#gc)"/><circle cx="800" cy="482" r="54" fill="#121a2e" stroke="#46557f" stroke-width="3" filter="url(#sh)"/><circle cx="800" cy="482" r="45" fill="#0a101f"/><g class="blades" id="bl"></g><circle cx="800" cy="482" r="9" fill="#56648a" stroke="#9aa8c8"/><text class="lc" x="800" y="552" text-anchor="middle">VENTILADOR</text></g>
+<g class="part" data-part="ram" id="rm"></g>
+<g class="part" data-part="cmos"><circle cx="690" cy="566" r="17" fill="url(#gy)" stroke="#e9edf7" stroke-width="1.5" filter="url(#sh)"/><circle cx="690" cy="566" r="9" fill="#5c667f"/><text class="lc" x="714" y="570">CMOS</text></g>
+<g class="part" data-part="battery"><rect x="238" y="614" width="624" height="76" rx="12" fill="url(#gv)" stroke="#6fbf74" stroke-width="2" filter="url(#sh)"/><path d="M394 614V690M550 614V690M706 614V690" stroke="#6fbf74" stroke-opacity=".5"/><text class="lc" x="550" y="657" text-anchor="middle" font-size="13" letter-spacing="4">BATERÍA · 4 CELDAS</text></g>
+</g>
+</svg>
+</div>
+<div class="tabs" id="tabs"></div>
+</section>
+<aside class="panel">
+<div id="info0"><h2>Explora la laptop</h2><p class="ds">Toca cualquier componente del dibujo, o elígelo en el menú deslizable de abajo, y aquí verás qué es, para qué sirve y sus datos clave.</p><p class="ds t">Usa los botones Exterior / Interior para cambiar de vista y ver CPU, RAM, SSD y batería.</p></div>
+<div id="info" hidden><span class="chip" id="cat"></span><h2 id="nm"></h2><p class="ds" id="desc"></p><ul id="pts"></ul></div>
+</aside>
+</main>
+</div>
+
+<script>
+const D=(cat,name,desc,p)=>({cat,name,desc,points:p.split('|')});
+const PARTS={
+bezel:D('Estructura','Marco y bisel','Marco que protege el panel. En su parte superior van la cámara, los micrófonos y las antenas Wi-Fi/Bluetooth.','Cuanto más fino, más pantalla en el mismo tamaño|Topes de goma evitan que roce el teclado'),
+screen:D('Visualización','Pantalla (display)','Muestra la imagen que genera la GPU. Casi siempre es LCD con retroiluminación LED; los modelos premium usan OLED, con negros puros.','Resolución: HD, Full HD, 2K o 4K|Refresco: 60 Hz en ofimática, 120–165 Hz en gaming|Paneles: TN (económico), IPS (ángulos), OLED (contraste)'),
+webcam:D('Entrada','Cámara web y micrófonos','Cámara integrada para videollamadas. Algunos modelos suman una cámara infrarroja para desbloqueo facial.','Resolución típica: 720p o 1080p|Un LED avisa cuando está activa'),
+hinge:D('Estructura','Bisagras','Unen la tapa con la base y resisten decenas de miles de aperturas. Por ellas pasan los cables de la pantalla y de las antenas.','Apertura de 130°–180° (360° en convertibles)|Abrir la tapa desde una esquina las daña'),
+chassis:D('Estructura','Carcasa (chasis)','Cuerpo del equipo: sostiene teclado, touchpad y placa madre, y ayuda a disipar el calor.','Aluminio: rígido y ligero, pero más caro|Plástico (ABS): económico|Integra rejillas, patas de goma y anclajes de puertos'),
+keyboard:D('Entrada','Teclado','Cada tecla cierra un contacto sobre una membrana; el controlador traduce la señal en una orden para el sistema.','Membrana (lo habitual) o mecánico (gaming)|Retroiluminación LED o RGB|Atajos con Fn: brillo, volumen, modo avión'),
+touchpad:D('Entrada','Touchpad','Superficie táctil capacitiva que sustituye al ratón: detecta el dedo mediante un campo eléctrico.','Multitáctil: desplazar, zoom y gestos de 3 dedos|Mecánico (se hunde) o háptico (vibra)'),
+power:D('Entrada','Botón de encendido','Envía la señal de arranque a la placa madre y gestiona la suspensión con el equipo encendido.','Puede integrar un LED o lector de huellas|Pulsación larga (5–10 s) fuerza el apagado'),
+speakers:D('Salida','Altavoces','Bocinas estéreo que convierten la señal del chip de audio en sonido.','Potencia típica: 2 × 2 W|Alternativas: Bluetooth, HDMI o USB-C'),
+usba:D('Conexiones','Puerto USB-A','El USB de siempre: ratones, teclados, memorias, discos externos e impresoras.','USB 2.0: 480 Mbps · USB 3.x: 5–20 Gbps|Entrega 5 V para cargar dispositivos'),
+hdmi:D('Conexiones','Puerto HDMI','Salida de vídeo y audio digital en un solo cable, para monitor, proyector o televisor.','HDMI 1.4: 4K a 30 Hz · 2.0: 4K a 60 Hz · 2.1: hasta 8K'),
+usbc:D('Conexiones','Puerto USB-C / Thunderbolt','Conector reversible que transporta datos, vídeo y energía por el mismo cable.','USB4 / Thunderbolt: hasta 40 Gbps|Power Delivery: carga el equipo hasta 100 W o más'),
+vent:D('Refrigeración','Rejillas de ventilación','Aberturas por donde entra aire frío y sale el caliente. Si se tapan, el equipo se calienta y pierde rendimiento.','No uses la laptop sobre la cama o el sofá|El polvo es la causa nº 1 de sobrecalentamiento'),
+audio:D('Conexiones','Jack de 3,5 mm','Entrada y salida de audio analógica para auriculares, altavoces o micrófono.','Conector TRRS: salida estéreo + micrófono|Sin latencia ni dependencia de Bluetooth'),
+sd:D('Conexiones','Lector de tarjetas SD','Ranura para leer y escribir tarjetas SD, útil para fotos y vídeos de cámaras o drones.','Compatible con SD, SDHC y SDXC (hasta 2 TB)|UHS-II alcanza unos 300 MB/s'),
+ethernet:D('Conexiones','Ethernet RJ-45','Conexión de red por cable: la más estable y de menor latencia.','Velocidades: 1 Gbps (habitual) y 2,5 Gbps|En laptops finas se usa un adaptador USB-C'),
+powerport:D('Conexiones','Puerto de carga (DC-in)','Entrada de corriente del adaptador para alimentar el equipo y cargar la batería.','Cada marca usa su conector y voltaje (19–20 V)|Cargadores de 45 W a 240 W'),
+motherboard:D('Interno','Placa madre','Circuito impreso principal que conecta CPU, RAM, almacenamiento, GPU, puertos y batería.','El chipset gestiona buses y periféricos|Aloja el firmware BIOS/UEFI|En laptops es específica de cada modelo'),
+cpu:D('Interno','CPU (procesador)','Ejecuta las instrucciones de los programas y coordina el sistema. Junto con la RAM, es lo que más define la velocidad.','Núcleos e hilos: de 4 a 16 en laptops|Frecuencia en GHz, modo turbo y caché L1/L2/L3|TDP típico: 15–55 W'),
+gpu:D('Interno','GPU (gráficos)','Procesador especializado que dibuja la imagen y acelera vídeo, IA y renderizado 3D.','Integrada: suficiente para ofimática y vídeo|Dedicada (NVIDIA / AMD): VRAM propia, de 4 a 16 GB'),
+ram:D('Interno','Memoria RAM','Memoria de trabajo volátil: guarda los datos de los programas abiertos y se borra al apagar.','DDR4 o DDR5, en formato SODIMM o soldada|Capacidad habitual: 8, 16, 32 o 64 GB'),
+storage:D('Interno','Almacenamiento (SSD)','Memoria no volátil donde viven el sistema, los programas y tus archivos.','SSD NVMe M.2: 2.000–7.000 MB/s|SSD SATA: unos 550 MB/s|Capacidades típicas: 256 GB a 2 TB'),
+battery:D('Interno','Batería','Acumulador de iones de litio, formado por varias celdas, que da autonomía sin enchufe.','Capacidad: 40–99 Wh|Vida útil: 300–1.000 ciclos de carga|Mantenerla entre 20 % y 80 % alarga su vida'),
+cooling:D('Interno','Sistema de refrigeración','Ventilador, heatpipes y disipador que sacan el calor de CPU y GPU fuera del chasis.','Los heatpipes llevan el calor a las aletas|Si falla: ruido, calor y bajada de rendimiento (thermal throttling)'),
+wifi:D('Interno','Tarjeta Wi-Fi y Bluetooth','Módulo M.2 de red inalámbrica; sus antenas suelen ir en el bisel de la pantalla.','Wi-Fi 5, 6/6E o 7|Bandas de 2,4 GHz (alcance) y 5/6 GHz (velocidad)'),
+cmos:D('Interno','Pila CMOS','Pila de botón (CR2032, 3 V) que mantiene el reloj y la configuración de la BIOS sin corriente.','Dura de 3 a 10 años|Si se agota, la fecha y la hora se desajustan')
+};
+
+const $=s=>document.querySelector(s),S=$('#lap'),st=$('#stage');
+const P=(u,v)=>[550+(u-.5)*2*(335+v*85),410+v*230];
+const q=(a,b,c,d)=>'M'+[P(a,b),P(c,b),P(c,d),P(a,d)].map(p=>p.map(n=>n.toFixed(1)).join(' ')).join('L')+'Z';
+
+let k=`<path d="${q(.115,.04,.885,.6)}" fill="#090d19" stroke="#2c3652"/>`;
+for(let r=0;r<5;r++)for(let c=0;c<14;c++){
+ if(r==4&&c>3&&c<10)continue;
+ const u=.13+c*.0535,w=r==4&&c==3?.3675:.0465,v=.07+r*.1;
+ k+=`<path d="${q(u,v+.01,u+w,v+.09)}" fill="#000" opacity=".6"/><path d="${q(u,v,u+w,v+.08)}" fill="url(#gk)" stroke="#0a0e1c" stroke-width=".8"/>`;
+}
+$('#kb').innerHTML=k;
+$('#sp').innerHTML=[[.03,.095],[.905,.97]].map(([a,b])=>`<path d="${q(a,.08,b,.58)}" fill="#090d19" stroke="#2c3652"/><path d="${q(a+.008,.1,b-.008,.56)}" fill="url(#gr)"/>`).join('');
+$('#tp').innerHTML=`<path d="${q(.36,.66,.64,.91)}" fill="url(#gt)" stroke="#8f9bb9"/><path d="${q(.36,.66,.64,.76)}" fill="#fff" opacity=".05"/>`;
+$('#bl').innerHTML=[0,60,120,180,240,300].map(a=>`<ellipse cx="800" cy="456" rx="9" ry="18" fill="#3d72d6" opacity=".75" transform="rotate(${a} 800 482)"/>`).join('');
+$('#rm').innerHTML=[530,553].map(y=>`<rect x="440" y="${y}" width="176" height="17" rx="3" fill="#1f5a45" stroke="#7ef0c0"/>`+[0,1,2,3,4,5].map(i=>`<rect x="${448+i*27}" y="${y+3}" width="20" height="11" rx="2" fill="#0b1a15"/>`).join('')).join('')+'<text class="lc" x="626" y="545">RAM</text>';
+
+const F='#8794b5',
+sz={a:[24,14,3],h:[24,15,3],c:[24,12,6],v:[18,22,3],j:[16,16,8],s:[28,9,2],e:[24,18,3],p:[16,16,8]},
+ic={a:`<rect x="-8" y="-1" width="16" height="3" fill="${F}"/>`,h:`<path d="M-8-3H8L5 4H-5Z" fill="${F}"/>`,c:`<rect x="-8" y="-2" width="16" height="4" rx="2" fill="${F}"/>`,v:`<path d="M-6-7H6M-6 0H6M-6 7H6" stroke="${F}" stroke-width="3" stroke-linecap="round"/>`,j:`<circle r="3" fill="${F}"/>`,s:`<rect x="-10" y="-1" width="20" height="2" fill="${F}"/>`,e:`<path d="M-7-5H-3V-2H3V-5H7V6H-7Z" fill="${F}"/>`,p:'<circle r="3" fill="#f0c46b"/>'},
+ps=[['usba','L',468,'USB-A','a'],['hdmi','L',506,'HDMI','h'],['usbc','L',544,'USB-C','c'],['vent','L',590,'Ventilación','v'],['audio','R',468,'Jack 3,5 mm','j'],['sd','R',506,'Lector SD','s'],['ethernet','R',544,'Ethernet','e'],['powerport','R',590,'Carga DC-in','p']];
+$('#pt').innerHTML=ps.map(([id,s,y,t,kd])=>{
+ const L=s=='L',x=(L?215-(y-410)*.37:885+(y-410)*.37).toFixed(1),[w,h,r]=sz[kd];
+ return `<g class="part" data-part="${id}"><g transform="translate(${x} ${y})"><rect x="${-w/2}" y="${-h/2}" width="${w}" height="${h}" rx="${r}" fill="#05070d" stroke="#c2cce2" stroke-width="1.4"/>${ic[kd]}</g><text class="lb" x="${L?x-22:+x+22}" y="${y+4}" text-anchor="${L?'end':'start'}">${t}</text></g>`;
+}).join('');
+
+let view='X';
+function sel(id){
+ const d=PARTS[id];if(!d)return;
+ S.querySelectorAll('.sel').forEach(e=>e.classList.remove('sel'));
+ S.querySelectorAll('#'+view+' [data-part="'+id+'"]').forEach(e=>e.classList.add('sel'));
+ $('#cat').textContent=d.cat;$('#nm').textContent=d.name;$('#desc').textContent=d.desc;
+ $('#pts').replaceChildren(...d.points.map(t=>Object.assign(document.createElement('li'),{textContent:t})));
+ $('#info0').hidden=true;$('#info').hidden=false;$('.panel').scrollTop=0;
+ const T=$('#tabs');
+ T.querySelectorAll('button').forEach(b=>{
+  const on=b.dataset.id==id;b.classList.toggle('on',on);
+  if(on)T.scrollTo({left:T.scrollLeft+b.getBoundingClientRect().left-T.getBoundingClientRect().left-(T.clientWidth-b.offsetWidth)/2,behavior:'smooth'});
+ });
+}
+function tabs(){
+ const ids=[...new Set([...S.querySelectorAll('#'+view+' .part')].map(g=>g.dataset.part))];
+ $('#tabs').innerHTML=ids.map(i=>`<button data-id="${i}">${PARTS[i].name.split(' (')[0]}</button>`).join('');
+ $('#tabs').scrollLeft=0;
+}
+$('#tabs').onclick=e=>{const b=e.target.closest('button');b&&sel(b.dataset.id)};
+S.addEventListener('click',e=>{const g=e.target.closest('.part');g&&sel(g.dataset.part)});
+document.querySelectorAll('.views button').forEach(b=>b.onclick=()=>{
+ document.querySelectorAll('.views button').forEach(x=>x.classList.toggle('on',x==b));
+ view=b.dataset.v;
+ $('#X').style.display=view=='X'?'':'none';$('#I').style.display=view=='I'?'':'none';
+ S.querySelectorAll('.sel').forEach(e=>e.classList.remove('sel'));
+ $('#info').hidden=true;$('#info0').hidden=false;tabs();
+});
+
+st.addEventListener('pointermove',e=>{
+ const r=st.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;
+ S.style.setProperty('--ry',(x*9).toFixed(2)+'deg');S.style.setProperty('--rx',(-y*7).toFixed(2)+'deg');
+});
+st.addEventListener('pointerleave',()=>{S.style.setProperty('--rx','0deg');S.style.setProperty('--ry','0deg')});
+
+S.querySelectorAll('.part').forEach(g=>{
+ g.setAttribute('tabindex','0');g.setAttribute('role','button');
+ g.setAttribute('aria-label',PARTS[g.dataset.part]?.name||'');
+ g.onkeydown=e=>{if(e.key=='Enter'||e.key==' '){e.preventDefault();sel(g.dataset.part)}};
+});
+tabs();
+</script>
+</body>
+</html>
